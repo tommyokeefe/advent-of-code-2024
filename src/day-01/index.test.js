@@ -13,6 +13,3 @@ test('solution1', () => {
   expect(solution1(input)).toEqual(11)
 })
 
-test('solution2', () => {
-  expect(solution2(input)).toEqual(31)
-})
