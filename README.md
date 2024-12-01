@@ -1,6 +1,6 @@
-# Advent of Code 2023
+# Advent of Code 2024
 
-Here are my solutions to the [Advent of Code](https://adventofcode.com/2023) puzzles for 2023.
+Here are my solutions to the [Advent of Code](https://adventofcode.com/2023) puzzles for 2024.
 
 I'm using plain JavaScript for my solutions, using Node to run my scripts.
 
