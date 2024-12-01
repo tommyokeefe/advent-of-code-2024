@@ -15,3 +15,8 @@ test('solution1', () => {
   console.log(`The solution is: ${solution}`)
 })
 
+test('solution2', () => {
+  const solution = solution2(input)
+  expect(solution).toEqual(31)
+  console.log(`The solution is: ${solution}`)
+})
