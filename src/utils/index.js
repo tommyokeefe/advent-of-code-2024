@@ -8,6 +8,6 @@ export function getInput(dir) {
   })
 }
 
-export const splitOnNewLine = (data) => data.trim().split(os.EOL)
+export const splitOnNewLine = data => data.trim().split(os.EOL)
 
-export const splitOnWhiteSpace = (data) => data.split(/\s+/)
+export const splitOnWhiteSpace = data => data.split(/\s+/)

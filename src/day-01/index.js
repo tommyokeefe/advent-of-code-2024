@@ -1,8 +1,8 @@
 import { getInput, splitOnNewLine, splitOnWhiteSpace } from '../utils/index.js'
 
-const data = getInput(__dirname);
+const data = getInput(__dirname)
 
-const formatData = (data) => {
+const formatData = data => {
   const listOne = []
   const listTwo = []
   const dataArray = splitOnNewLine(data)
@@ -10,9 +10,9 @@ const formatData = (data) => {
     const [itemOne, itemTwo] = splitOnWhiteSpace(item)
     listOne.push(itemOne)
     listTwo.push(itemTwo)
-  });
+  })
   return [listOne, listTwo]
-};
+}
 
 export function solution1(input) {
   const [listOne, listTwo] = formatData(input)
@@ -23,7 +23,7 @@ export function solution1(input) {
 
   // reduce to get the total
   return sortedOne.reduce((total, firstItem, index) => {
-    const secondItem = sortedTwo[index];
+    const secondItem = sortedTwo[index]
 
     // equality means no change
     if (firstItem === secondItem) {
@@ -49,14 +49,12 @@ export function solution2(input) {
 
     // only change the total if the multiplier is greater than 0
     if (multiplier > 0) {
-      return total + (firstItem * multiplier)
+      return total + firstItem * multiplier
     }
 
-    return total;
+    return total
   }, 0)
 }
 
-//const solutionOne = solution1(data);
-//console.log(solutionOne); 1941353
-//const solutionTwo = solution2(data);
-//console.log(solutionTwo); 22539317
+// console.log(solution1(data)); // 1941353
+// console.log(solution2(data)); // 22539317

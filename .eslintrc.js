@@ -14,5 +14,5 @@ module.exports = {
     'no-unused-vars': 'off',
     'prefer-const': 'warn',
   },
-  sourceType: 'module',
+  //sourceType: 'module',
 }

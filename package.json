@@ -1,5 +1,5 @@
 {
-  "name": "advent-of-code-2023",
+  "name": "advent-of-code-2024",
   "version": "1.0.0",
   "private": true,
   "description": "My solutions for Advent of Code 2024",
@@ -11,15 +11,13 @@
     "start": "node -r esm src/day-$DAY/index.js"
 
   },
-  "author": "Kyle Shevlin <kyle.a.shevlin@gmail.com> (https://kyleshevlin.com/)",
+  "author": "Tommy O'Keefe <tommyokeefe81@gmail.com> (https://tommyokeefe.com/)",
   "license": "MIT",
   "devDependencies": {
     "eslint": "^8.29.0",
     "eslint-config-prettier": "^8.5.0",
     "prettier": "^2.7.1",
-    "vitest": "^2.1.6"
-  },
-  "dependencies": {
+    "vitest": "^2.1.6",
     "esm": "^3.2.25"
   }
 }
