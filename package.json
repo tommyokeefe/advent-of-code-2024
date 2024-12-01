@@ -9,15 +9,15 @@
     "lint": "eslint src/**/*.js",
     "test": "vitest",
     "start": "node -r esm src/day-$DAY/index.js"
-
   },
   "author": "Tommy O'Keefe <tommyokeefe81@gmail.com> (https://tommyokeefe.com/)",
   "license": "MIT",
   "devDependencies": {
     "eslint": "^8.29.0",
     "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-vitest-globals": "^1.5.0",
+    "esm": "^3.2.25",
     "prettier": "^2.7.1",
-    "vitest": "^2.1.6",
-    "esm": "^3.2.25"
+    "vitest": "^2.1.6"
   }
 }
