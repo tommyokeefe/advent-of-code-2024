@@ -1,4 +1,4 @@
-const { solution1, solution2 } = require('.')
+import { solution1, solution2 } from './'
 
 const input = ``
 

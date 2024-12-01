@@ -1,7 +1,7 @@
-const fs = require('fs')
-const path = require('path')
+import fs from 'fs'
+import path from 'path'
 
-function getInput(dir) {
+export function getInput(dir) {
   return fs.readFileSync(path.resolve(dir, './input.txt'), {
     encoding: 'utf-8',
   })
@@ -11,7 +11,7 @@ function getInput(dir) {
  * Data Structures
  */
 
-function createQueue() {
+export function createQueue() {
   const queue = []
 
   return {
@@ -33,7 +33,7 @@ function createQueue() {
   }
 }
 
-function createPriorityQueue() {
+export function createPriorityQueue() {
   const queue = []
 
   const createQueueElement = (key, priority) => ({ key, priority })
@@ -68,7 +68,7 @@ function createPriorityQueue() {
   return result
 }
 
-function createStack() {
+export function createStack() {
   const stack = []
 
   return {
@@ -90,12 +90,12 @@ function createStack() {
   }
 }
 
-const inc = x => x + 1
-const dec = x => x - 1
-const lessThanOrEqualTo = (x, y) => x <= y
-const greaterThanOrEqualTo = (x, y) => x >= y
+export const inc = x => x + 1
+export const dec = x => x - 1
+export const lessThanOrEqualTo = (x, y) => x <= y
+export const greaterThanOrEqualTo = (x, y) => x >= y
 
-function createRange(from, to) {
+export function createRange(from, to) {
   const result = []
 
   let change = inc
@@ -116,13 +116,13 @@ function createRange(from, to) {
   return result
 }
 
-function traverse(node, visitFn, depth = 0) {
+export function traverse(node, visitFn, depth = 0) {
   visitFn(node, depth)
 
   node.children.forEach(child => traverse(child, visitFn, depth + 1))
 }
 
-function createTreeNode(key, meta, parentNode = null) {
+export function createTreeNode(key, meta, parentNode = null) {
   const children = []
 
   const node = {
@@ -142,7 +142,7 @@ function createTreeNode(key, meta, parentNode = null) {
   return node
 }
 
-function createTree(rootKey, meta) {
+export function createTree(rootKey, meta) {
   const rootNode = createTreeNode(rootKey, meta)
 
   return {
@@ -169,27 +169,27 @@ function createTree(rootKey, meta) {
  * Math helpers
  */
 
-const add = (x, y) => x + y
+export const add = (x, y) => x + y
 
-const sum = nums => nums.reduce(add)
+export const sum = nums => nums.reduce(add)
 
-const subtract = (x, y) => x - y
+export const subtract = (x, y) => x - y
 
-const difference = nums => nums.reduce(subtract)
+export const difference = nums => nums.reduce(subtract)
 
-const multiply = (x, y) => x * y
+export const multiply = (x, y) => x * y
 
-const product = nums => nums.reduce(multiply)
+export const product = nums => nums.reduce(multiply)
 
-const divide = (x, y) => x / y
+export const divide = (x, y) => x / y
 
-const quotient = nums => nums.reduce(divide)
+export const quotient = nums => nums.reduce(divide)
 
 /**
  * Set helpers
  */
 
-function intersection(...sets) {
+export function intersection(...sets) {
   return sets.reduce((set1, set2) => {
     const result = new Set()
 
@@ -203,7 +203,7 @@ function intersection(...sets) {
   })
 }
 
-function union(...sets) {
+export function union(...sets) {
   const result = new Set()
 
   for (const set of sets) {
@@ -215,7 +215,7 @@ function union(...sets) {
   return result
 }
 
-function isDisjoint(a, b) {
+export function isDisjoint(a, b) {
   for (const item of a) {
     if (b.has(item)) return false
   }
@@ -227,7 +227,7 @@ function isDisjoint(a, b) {
   return true
 }
 
-function setDifference(a, b) {
+export function setDifference(a, b) {
   const result = new Set(a)
 
   for (const item of b) {
@@ -242,14 +242,14 @@ function setDifference(a, b) {
  */
 
 // prettier-ignore
-const pipe = (...fns) => x => fns.reduce((acc, fn) => fn(acc), x)
+export const pipe = (...fns) => x => fns.reduce((acc, fn) => fn(acc), x)
 
-const map = fn => array => array.map(fn)
+export const map = fn => array => array.map(fn)
 
-const reduce = (reducer, initialArg) => array =>
+export const reduce = (reducer, initialArg) => array =>
   array.reduce(reducer, initialArg)
 
-const spread = fn => array => fn(...array)
+export const spread = fn => array => fn(...array)
 
 /**
  * Use this with map to log out the current value next to the message while
@@ -262,13 +262,13 @@ const spread = fn => array => fn(...array)
  *   .reduce(add, 0)
  * ```
  */
-const trace = msg => x => (console.log(msg, x), x)
+export const trace = msg => x => (console.log(msg, x), x)
 
 /**
  * Matrix helpers
  */
 
-function transpose(matrix) {
+export function transpose(matrix) {
   const result = matrix.map(row => [...row])
 
   for (let i = 0; i < result.length; i++) {
@@ -283,27 +283,27 @@ function transpose(matrix) {
   return result
 }
 
-function reverseRows(matrix) {
+export function reverseRows(matrix) {
   return matrix.map(row => [...row].reverse())
 }
 
-function rotateClockwise(matrix) {
+export function rotateClockwise(matrix) {
   return reverseRows(transpose(matrix))
 }
 
-function rotateCounterClockwise(matrix) {
+export function rotateCounterClockwise(matrix) {
   return transpose(reverseRows(matrix))
 }
 
-const safeGridGet = (grid, rowIdx, colIdx) => grid[rowIdx]?.[colIdx]
+export const safeGridGet = (grid, rowIdx, colIdx) => grid[rowIdx]?.[colIdx]
 
-const getManhattanDistance = (x1, y1, x2, y2) =>
+export const getManhattanDistance = (x1, y1, x2, y2) =>
   Math.abs(x1 - x2) + Math.abs(y1 - y2)
 
 // found online:
 // line intercept math by Paul Bourke http://paulbourke.net/geometry/pointlineplane/
 // Determine the intersection point of two line segments
-function getLineIntersection(line1, line2) {
+export function getLineIntersection(line1, line2) {
   const [x1, y1, x2, y2] = line1
   const [x3, y3, x4, y4] = line2
 
@@ -327,7 +327,7 @@ function getLineIntersection(line1, line2) {
   return { x, y }
 }
 
-function zip(a, b) {
+export function zip(a, b) {
   const result = []
 
   while (a.length || b.length) {
@@ -338,11 +338,11 @@ function zip(a, b) {
   return result
 }
 
-function drawGrid(grid) {
+export function drawGrid(grid) {
   return `\n${grid.map(row => row.join('')).join('\n')}\n`
 }
 
-function findLastIndex(arr, fn) {
+export function findLastIndex(arr, fn) {
   const clone = [...arr].reverse()
   const index = clone.findIndex(fn)
 
@@ -370,43 +370,6 @@ function findLastIndex(arr, fn) {
  * }
  * ```
  */
-const gcd = (a, b) => (a ? gcd(b % a, a) : b)
+export const gcd = (a, b) => (a ? gcd(b % a, a) : b)
 
-const lcm = (a, b) => (a * b) / gcd(a, b)
-
-module.exports = {
-  add,
-  createPriorityQueue,
-  createQueue,
-  createRange,
-  createStack,
-  createTree,
-  difference,
-  divide,
-  drawGrid,
-  findLastIndex,
-  gcd,
-  getInput,
-  getLineIntersection,
-  getManhattanDistance,
-  intersection,
-  isDisjoint,
-  lcm,
-  map,
-  multiply,
-  pipe,
-  product,
-  quotient,
-  reduce,
-  rotateClockwise,
-  rotateCounterClockwise,
-  safeGridGet,
-  setDifference,
-  spread,
-  subtract,
-  sum,
-  trace,
-  traverse,
-  union,
-  zip,
-}
+export const lcm = (a, b) => (a * b) / gcd(a, b)

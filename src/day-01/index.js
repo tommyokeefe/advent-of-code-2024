@@ -1,4 +1,4 @@
-const { getInput, sum } = require('../utils')
+import { getInput, sum } from '../utils'
 
 const data = getInput(__dirname)
 
@@ -19,7 +19,7 @@ function formatInput(input) {
   return [left, right]
 }
 
-function solution1(input) {
+export function solution1(input) {
   const [left, right] = formatInput(input)
 
   const sortedLeft = left.toSorted()
@@ -33,7 +33,7 @@ function solution1(input) {
   return sum(distances)
 }
 
-function solution2(input) {
+export function solution2(input) {
   const [left, right] = formatInput(input)
 
   const rightCounts = {}
@@ -57,8 +57,3 @@ function solution2(input) {
 
 // console.log(solution1(data)) // 2164381
 // console.log(solution2(data)) // 20719933
-
-module.exports = {
-  solution1,
-  solution2,
-}

@@ -1,4 +1,4 @@
-const { intersection, union } = require('./')
+import { intersection, union } from './'
 
 test('intersection', () => {
   const a = new Set([1, 2, 3])

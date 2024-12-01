@@ -1,19 +1,18 @@
 module.exports = {
   env: {
-    commonjs: true,
-    es2021: true,
+    es2022: true,
     node: true,
-    'jest/globals': true,
   },
   extends: ['eslint:recommended', 'prettier'],
   overrides: [],
   parserOptions: {
     ecmaVersion: 'latest',
   },
-  plugins: ['jest'],
+  plugins: [],
   rules: {
     'no-fallthrough': 'off',
     'no-unused-vars': 'off',
     'prefer-const': 'warn',
   },
+  sourceType: 'module',
 }
