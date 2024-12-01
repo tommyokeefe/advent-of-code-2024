@@ -10,6 +10,8 @@ const input = `
 `
 
 test('solution1', () => {
-  expect(solution1(input)).toEqual(11)
+  const solution = solution1(input)
+  expect(solution).toEqual(11)
+  console.log(`The solution is: ${solution}`)
 })
 
