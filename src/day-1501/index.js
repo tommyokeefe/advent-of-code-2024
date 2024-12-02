@@ -14,25 +14,29 @@ export function solution1(input) {
     }
 
     return floor
-  },0)
+  }, 0)
 }
 
 export function solution2(input) {
   const directions = input.trim().split('')
-  const { position } = directions.reduce((floor, step, index) => {
-    if (step === '(') {
-      const total = floor.total + 1
-      return { ...floor, total }
-    }
+  const { position } = directions.reduce(
+    (floor, step, index) => {
+      if (step === '(') {
+        const total = floor.total + 1
+        return { ...floor, total }
+      }
 
-    if (step === ')') {
-      const total = floor.total - 1
-      const position = total < 0 && !floor.position ? index + 1 : floor.position
-      return { position, total }
-    }
+      if (step === ')') {
+        const total = floor.total - 1
+        const position =
+          total < 0 && !floor.position ? index + 1 : floor.position
+        return { position, total }
+      }
 
-    return floor
-  }, { total: 0, position: false })
+      return floor
+    },
+    { total: 0, position: false }
+  )
 
   return position
 }
