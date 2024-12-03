@@ -26,4 +26,4 @@ export function solution2(input) {
 }
 
 // console.log(solution1(data)) // 1598415
-console.log(solution2(data)) // 3812909
+// console.log(solution2(data)) // 3812909

@@ -12,11 +12,9 @@ const input = `
 test('solution1', () => {
   const solution = solution1(input)
   expect(solution).toEqual(11)
-  console.log(`The solution is: ${solution}`)
 })
 
 test('solution2', () => {
   const solution = solution2(input)
   expect(solution).toEqual(31)
-  console.log(`The solution is: ${solution}`)
 })
