@@ -28,7 +28,7 @@ const createGameBoard = (lines) => {
             gameBoard.push({
                 value: character,
                 position: { x: charIndex, y: lineIndex },
-                key: `${charIndex}${lineIndex}`
+                key: `x${charIndex}y${lineIndex}`
             })
         })
     })
@@ -42,9 +42,8 @@ const getNewPosition = (position, direction) => ({
 
 const createNavigateAndCheckValue = (gameBoard) => (position, direction, valid) => {
     const newPosition = getNewPosition(position, direction)
-    const key = `${newPosition.x}${newPosition.y}`
+    const key = `x${newPosition.x}y${newPosition.y}`
     const char = gameBoard.find(character => character.key === key)
-
     if (!char || !valid(char.value)) {
         return undefined
     }
@@ -89,4 +88,4 @@ export function solution1(input) {
 
 export function solution2(input) {}
 
-console.log(solution3(data)) // 2196 (wrong)
+// console.log(solution1(data)) // 2344
