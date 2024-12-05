@@ -35,36 +35,28 @@ const createUpdateFilter = (instructions, isGood) => update => {
 }
 
 const sortUpdate = (update, instructions) => {
-  let changes = false
-  let tempUpdate = update
-  update.forEach(item => {
-    const leftIndex = tempUpdate.findIndex(value => value === item)
-    const indexes = instructions
-      .filter(instruction => instruction.left === item)
-      .map(instruction =>
-        tempUpdate.findIndex(value => value === instruction.right)
-      )
-      .filter(instruction => instruction >= 0)
-      .sort()
-    const lowestIndex = indexes[0]
-    if (leftIndex > lowestIndex) {
-      changes = true
-      const leftValue = tempUpdate[leftIndex]
-      tempUpdate = tempUpdate
-        .toSpliced(leftIndex, 1)
-        .toSpliced(lowestIndex, 0, leftValue)
+  return update.toSorted((a, b) => {
+    const aRules = instructions
+      .filter(instruction => a === instruction.left)
+      .map(instruction => instruction.right)
+    const bRules = instructions
+      .filter(instruction => b === instruction.left)
+      .map(instruction => instruction.right)
+
+    if (aRules.includes(b)) {
+      return -1
     }
+
+    if (bRules.includes(a)) {
+      return 1
+    }
+
+    return 0
   })
-
-  if (changes) {
-    return sortUpdate(tempUpdate, instructions)
-  }
-
-  return tempUpdate
 }
 
 const calculateMiddleReducer = (total, update) => {
-  const middleIndex = (update.length - 1) / 2
+  const middleIndex = Math.floor(update.length / 2)
   return update[middleIndex] + total
 }
 
@@ -84,4 +76,4 @@ export function solution2(input) {
 }
 
 // console.log(solution1(data)) // 7074
-console.log(solution2(data))
+// console.log(solution2(data)) // 4828
