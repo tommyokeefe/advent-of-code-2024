@@ -1,4 +1,4 @@
-import { getInput, elapsed } from '../utils'
+import { getInput } from '../utils'
 
 const data = getInput(__dirname)
 
@@ -7,11 +7,12 @@ const RIGHT = '>'
 const DOWN = 'v'
 const LEFT = '<'
 
-const buildGameBoard = input =>
-  input
+const buildGameBoard = input => {
+    const board = {};
+    input
     .trim()
     .split('\n')
-    .reduce((board, line, y) => {
+    .forEach(( line, y) => {
       line
         .trim()
         .split('')
@@ -21,10 +22,11 @@ const buildGameBoard = input =>
             square.set('y', y)
             square.set('value', item)
             square.set('key', `x${x}y${y}`)
-            board.push(square)
+            board[`x${x}y${y}`] = square
         })
-      return board
-    }, [])
+    })
+    return board
+}
 
 const getNextKey = (x, y, currentDirection) => {
     switch (currentDirection) {
@@ -36,6 +38,34 @@ const getNextKey = (x, y, currentDirection) => {
             return `x${x}y${y+1}`
         case LEFT:
             return `x${x-1}y${y}`
+        default:
+            throw Error(`Bad Direction! - x: ${x}, y: ${y}, currentDirection: ${currentDirection}`)
+    }
+}
+
+const getNextKeys = (x, y, currentDirection, highIndex) => {
+    let keys = []
+    switch (currentDirection) {
+        case UP:
+            for (let i = y; i >= 0; i--) {
+                keys.push(`x${x}y${i}`)
+            }
+            return [ keys, currentDirection ]
+        case RIGHT:
+            for (let i = x; i <= highIndex; i++) {
+                keys.push(`x${i}y${y}`)
+            }
+            return [ keys, currentDirection ]
+        case DOWN:
+            for (let i = y; i <= highIndex; i++) {
+                keys.push(`x${x}y${i}`)
+            }
+            return [ keys, currentDirection ]
+        case LEFT:
+            for (let i = x; i >= 0; i--) {
+                keys.push(`x${i}y${y}`)
+            }
+            return [ keys, currentDirection ]
         default:
             throw Error(`Bad Direction! - x: ${x}, y: ${y}, currentDirection: ${currentDirection}`)
     }
@@ -60,49 +90,25 @@ const turn = (guard) => {
     }
 }
 
-const detectLoop = (key, steps) => {
-    const repeats = []
-    steps.forEach((step, index) => {
-        if (step === key) {
-            repeats.push(index)
-        }
-    })
-
-    if (repeats.length >= 3) {
-        const startOfLoop1 = repeats[repeats.length -3]
-        const endOfLoop1 = repeats[repeats.length -2] - 1
-        const loop1 = steps.slice(startOfLoop1, endOfLoop1)
-        const startOfLoop2 = repeats[repeats.length -2]
-        const endOfLoop2 = repeats[repeats.length -1] - 1
-        const loop2 = steps.slice(startOfLoop2, endOfLoop2)
-
-        if (loop1.length <= 0 || loop2.length <= 0) {
-            return false
-        }
-
-        return JSON.stringify(loop1) === JSON.stringify(loop2)
-    }
-    return false
-}
-
-const move = (guard, board, status, steps) => {
-    const stuck = {}
-    const key = guard.get('key')
-
-    if (steps && steps[steps.length -1] !== key) {
-        stuck[key] = undefined
-        steps.push(key)
-        if (detectLoop(key, steps)) {
-            return { ...status, loop: true, done: true }
-        }
-    }
-
-    const nextKey = getNextKey(guard.get('x'), guard.get('y'), guard.get('value'))
-    const newSquare = board.find(spot => spot.get('key') === nextKey)
+const move = (guard, boardMap, status) => {
+    let nextKey = getNextKey(guard.get('x'), guard.get('y'), guard.get('value'))
+    let newSquare = boardMap[nextKey]
 
     if (!newSquare) {
         guard.set('value', 'x')
         return { ...status, done: true }
+    }
+
+    let newSquareValue = newSquare.get('value');
+
+    while (newSquareValue in ['x', '.']) {
+        guard.set('value', 'x')
+        nextKey = getNextKey(newSquare.get('x'), newSquare.get('y'), guard.get('value'))
+        newSquare = boardMap[nextKey]
+        if (!newSquare) {
+            return { ...status, done: true }
+        }
+        newSquareValue = newSquare.get('value');
     }
 
     if (newSquare.get('value') === '#') {
@@ -115,16 +121,59 @@ const move = (guard, board, status, steps) => {
     return { ...status, guard: newSquare }
 }
 
+const getNewPosition = (direction, obstacle) => {
+    const newPosition = new Map(obstacle)
+    newPosition.set('value', direction)
+    switch (direction) {
+        case UP:
+            return newPosition.set('y', obstacle.get('y') + 1)
+        case RIGHT:
+            return newPosition.set('x', obstacle.get('x') - 1)
+        case DOWN:
+            return newPosition.set('y', obstacle.get('y') - 1)
+        case LEFT:
+            return newPosition.set('x', obstacle.get('x') + 1)
+    }
+}
+
+const findLoops = (guard, board, status, highIndex) => {
+    const [ keys, direction ] = getNextKeys(guard.get('x'), guard.get('y'), guard.get('value'), highIndex)
+    const nextObstacle = keys.find(key => {
+        const square = board[key]
+        return square.get('value') === '#'
+    });
+
+    if (!nextObstacle) {
+        return { ...status, done: true }
+    }
+
+    guard.set('value', '.')
+
+    const newPosition = getNewPosition(direction, board[nextObstacle])
+    const potentialLoops = status.potentialLoops
+    const loopKey = `${newPosition.get('key')}${newPosition.get('value')}`
+    const loop = potentialLoops.find(item => loopKey === item)
+
+    if (loop) {
+        return { ...status, loop: true, done: true }
+    }
+
+    turn(newPosition)
+
+   return { ...status, guard: newPosition, potentialLoops: [...potentialLoops, loopKey] }
+}
+
 export function solution1(input) {
   const board = buildGameBoard(input)
-  const guard = board.find(position => position.get('value') === UP)
+  const boardMap = Object.keys(board).map(key => board[key]);
+  const guard = boardMap.find(position => position.get('value') === UP)
   let status = { done: false, guard }
 
   while (!status.done) {
     status = move(status.guard, board, status)
   }
 
-  return board.reduce((total, square) => {
+  return boardMap.reduce((total, square) => {
     if (square.get('value') === 'x') {
         return total +1
     }
@@ -137,30 +186,32 @@ export function solution1(input) {
 export function solution2(input) {
     let loops = 0
     let board = buildGameBoard(input)
-    let guard = board.find(position => position.get('value') === UP)
+    const boardMap = Object.keys(board).map(key => board[key]);
+    const highIndex = Math.sqrt(boardMap.length) - 1
+    let guard = boardMap.find(position => position.get('value') === UP)
     let status = { done: false, guard }
 
     while (!status.done) {
       status = move(status.guard, board, status)
     }
-    const candidates = board.filter(square => square.get('value') === 'x')
-    const timeSeconds = Date.now() / 1000
-    console.log(`runs needed: ${candidates.length}`)
+
+    const candidates = boardMap.filter(square => square.get('value') === 'x')
     for (let i = 0; i < candidates.length; i++) {
-        console.log(`run ${i} - elapsed: ${elapsed(timeSeconds)} seconds`)
         const freshBoard = buildGameBoard(input)
+        const freshBoardMap = Object.keys(freshBoard).map(key => freshBoard[key]);
         const squareCandidateKey = candidates[i].get('key');
-        const square = freshBoard.find(square => squareCandidateKey === square.get('key'))
-        guard = freshBoard.find(position => position.get('value') === UP)
-        let steps = []
-        let status = { done: false, loop: false, guard }
+        const square = freshBoard[squareCandidateKey]
+        guard = freshBoardMap.find(position => position.get('value') === UP)
+        let status = { done: false, loop: false, detectLoops: true, potentialLoops: [], guard }
 
         if (square.get('value') !== '.') {
             continue
         }
+
         square.set('value', '#')
+
         while (!status.done) {
-            status = move(status.guard, freshBoard, status, steps)
+            status = findLoops(status.guard, freshBoard, status, highIndex)
         }
 
         if (status.loop) {
@@ -171,4 +222,4 @@ export function solution2(input) {
 }
 
 // console.log(solution1(data)) // 5086
-console.log(solution2(data))
+// console.log(solution2(data)) // 1770
