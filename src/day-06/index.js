@@ -1,4 +1,4 @@
-import { getInput } from '../utils'
+import { getInput, elapsed } from '../utils'
 
 const data = getInput(__dirname)
 
@@ -61,15 +61,39 @@ const turn = (guard) => {
 }
 
 const detectLoop = (key, steps) => {
-    return steps.filter(step => step === key).length >= 10
+    const repeats = []
+    steps.forEach((step, index) => {
+        if (step === key) {
+            repeats.push(index)
+        }
+    })
+
+    if (repeats.length >= 3) {
+        const startOfLoop1 = repeats[repeats.length -3]
+        const endOfLoop1 = repeats[repeats.length -2] - 1
+        const loop1 = steps.slice(startOfLoop1, endOfLoop1)
+        const startOfLoop2 = repeats[repeats.length -2]
+        const endOfLoop2 = repeats[repeats.length -1] - 1
+        const loop2 = steps.slice(startOfLoop2, endOfLoop2)
+
+        if (loop1.length <= 0 || loop2.length <= 0) {
+            return false
+        }
+
+        return JSON.stringify(loop1) === JSON.stringify(loop2)
+    }
+    return false
 }
 
-const move = (guard, board, steps) => {
-    if (steps) {
-        steps.push(guard.get('key'))
-        if (detectLoop(guard.get('key'), steps)) {
-            console.log(steps)
-            return true
+const move = (guard, board, status, steps) => {
+    const stuck = {}
+    const key = guard.get('key')
+
+    if (steps && steps[steps.length -1] !== key) {
+        stuck[key] = undefined
+        steps.push(key)
+        if (detectLoop(key, steps)) {
+            return { ...status, loop: true, done: true }
         }
     }
 
@@ -78,23 +102,28 @@ const move = (guard, board, steps) => {
 
     if (!newSquare) {
         guard.set('value', 'x')
-        return
+        return { ...status, done: true }
     }
 
     if (newSquare.get('value') === '#') {
         turn(guard)
-        return move(guard, board, steps)
+        return { ...status, guard }
     }
 
     newSquare.set('value', guard.get('value'))
     guard.set('value', 'x')
-    return move(newSquare, board, steps)
+    return { ...status, guard: newSquare }
 }
 
 export function solution1(input) {
   const board = buildGameBoard(input)
   const guard = board.find(position => position.get('value') === UP)
-  move(guard, board)
+  let status = { done: false, guard }
+
+  while (!status.done) {
+    status = move(status.guard, board, status)
+  }
+
   return board.reduce((total, square) => {
     if (square.get('value') === 'x') {
         return total +1
@@ -103,29 +132,38 @@ export function solution1(input) {
   }, 0)
 }
 
+
+
 export function solution2(input) {
-    const startTime = Date.now() / 1000
-    console.log('starting run', startTime)
     let loops = 0
     let board = buildGameBoard(input)
-    console.log(`total runs needed: ${board.length}`);
-    for (let i = 0; i < board.length; i++) {
-        console.log('in for loop')
+    let guard = board.find(position => position.get('value') === UP)
+    let status = { done: false, guard }
+
+    while (!status.done) {
+      status = move(status.guard, board, status)
+    }
+    const candidates = board.filter(square => square.get('value') === 'x')
+    const timeSeconds = Date.now() / 1000
+    console.log(`runs needed: ${candidates.length}`)
+    for (let i = 0; i < candidates.length; i++) {
+        console.log(`run ${i} - elapsed: ${elapsed(timeSeconds)} seconds`)
         const freshBoard = buildGameBoard(input)
-        const square = freshBoard[i];
-        let guard = freshBoard.find(position => position.get('value') === UP)
+        const squareCandidateKey = candidates[i].get('key');
+        const square = freshBoard.find(square => squareCandidateKey === square.get('key'))
+        guard = freshBoard.find(position => position.get('value') === UP)
         let steps = []
+        let status = { done: false, loop: false, guard }
 
         if (square.get('value') !== '.') {
-            console.log(`no run for: ${i} - ${Date.now() / 1000 - startTime} seconds elapsed`)
             continue
         }
-
-        console.log(`run for: ${i} - ${Date.now() / 1000 - startTime} seconds elapsed`)
         square.set('value', '#')
-        const loop = move(guard, freshBoard, steps)
+        while (!status.done) {
+            status = move(status.guard, freshBoard, status, steps)
+        }
 
-        if (loop) {
+        if (status.loop) {
             loops++
         }
     }
