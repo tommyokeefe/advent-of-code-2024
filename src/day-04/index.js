@@ -118,7 +118,8 @@ export function solution2(input) {
 
     const { updatedTotal } = directionList.reduce(
       (result, direction) => {
-        let { updatedTotal, xMasCount } = result
+        let { xMasCount } = result
+        const { updatedTotal } = result
         // check m
         let newPosition = navigateAndCheckValue(position, direction, isM)
         if (!newPosition) {
