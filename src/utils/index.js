@@ -19,3 +19,13 @@ export const range = (start, stop, step) =>
     { length: Math.ceil((stop - start) / step) },
     (_, i) => start + i * step
   )
+
+export const getAdjacents = position => {
+  const { x, y } = position
+  return [
+    { x, y: y - 1 },
+    { x: x + 1, y },
+    { x, y: y + 1 },
+    { x: x - 1, y },
+  ]
+}
