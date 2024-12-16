@@ -1,4 +1,4 @@
-import { getInput } from '../utils'
+import { getInput, getAdjacents } from '../utils'
 
 const data = getInput(__dirname)
 
@@ -106,18 +106,21 @@ const drawGridWithRobots = (robots) => {
     })
 
     grid.forEach((line) => {
-        console.log(line.join(' '))
+        console.log(line.join(''))
     })
 }
 
 export function solution1(input) {
     let robots = formatInput(input)
 
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 500; i++) {
         robots = robots.map(robot => {
             return moveRobot(robot)
         })
-        // drawGridWithRobots(robots)
+        console.log(`\n
+drawing grid for run #${i + 1}
+\n`)
+        drawGridWithRobots(robots)
     }
 
     const quadrants = robots.reduce((quadrants, robot) => {
@@ -144,6 +147,42 @@ export function solution1(input) {
     return quadrants.one * quadrants.two * quadrants.three * quadrants.four
 }
 
-export function solution2(input) {}
+const checkRobotsForPattern = (robots) => {
+    let longestConsecutive = 0
+
+    robots.forEach(({ position }) => {
+        const consecutiveRobots = [position]
+        let newPosition = { ...position, y: position.y + 1 }
+        let matches = robots.filter((robot) => robot.position.x === newPosition.x && robot.position.y === newPosition.y)
+
+        while (matches.length > 0) {
+            consecutiveRobots.push(newPosition)
+            newPosition = { ...position, y: newPosition.y + 1 }
+            matches = robots.filter(({ position }) => position.x === newPosition.x && position.y === newPosition.y)
+        }
+
+        if (consecutiveRobots.length > longestConsecutive) {
+            longestConsecutive = consecutiveRobots.length
+        }
+    })
+
+    return longestConsecutive > 10
+}
+
+export function solution2(input) {
+    let runs = 0
+    let robots = formatInput(input)
+    let patternFound = false
+    while (!patternFound) {
+        robots = robots.map(robot => {
+            return moveRobot(robot)
+        })
+        patternFound = checkRobotsForPattern(robots)
+        runs++
+        console.log(`runs: ${runs}`)
+    }
+    drawGridWithRobots(robots)
+}
 
 // console.log(solution1(data)) // 224357412
+// console.log(solution2(data)) // 7083

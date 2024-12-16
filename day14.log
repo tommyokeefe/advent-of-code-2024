@@ -1,0 +1,4 @@
+
+> advent-of-code-2024@1.0.0 start
+> node -r esm src/day-$DAY/index.js
+
